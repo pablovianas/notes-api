@@ -21,10 +21,11 @@ class UserController {
 
     async update(req, res){
         const { name, email, password, old_password } = req.body;
-        const { id } = req.params; 
+        const user_id = req.user.id; 
+        console.log(user_id);
 
         const db = await sqliteConnection();
-        const user = await db.get("SELECT * FROM users WHERE id = (?)", [id]);
+        const user = await db.get("SELECT * FROM users WHERE id = (?)", [user_id]);
 
         if( !user ) throw new AppError("User not found");
 
@@ -44,7 +45,7 @@ class UserController {
             user.password = await hash(password, 8);
         }
 
-        await db.run(`UPDATE users SET name = ?, email = ?, password = ?, updated_at = DATETIME('now') WHERE id = ?`, [user.name, user.email, user.password, id]);
+        await db.run(`UPDATE users SET name = ?, email = ?, password = ?, updated_at = DATETIME('now') WHERE id = ?`, [user.name, user.email, user.password, user_id]);
 
         return res.status(200).json();
 
