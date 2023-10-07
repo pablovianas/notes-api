@@ -8,16 +8,16 @@ class SessionsController {
     async create(req, res){
         const { email, password } = req.body;
 
-        const user = await knex("users").where({email}).first();
+        const user = await knex('users').where({email}).first();
 
         if(!user){
-            throw new AppError("User or e-mail incorrect", 401)
+            throw new AppError('User or e-mail incorrect', 401)
         }
 
         const passwordMatched = await compare(password, user.password);
 
         if(!passwordMatched){
-            throw new AppError("User or e-mail incorrect", 401)
+            throw new AppError('User or e-mail incorrect', 401)
         }
 
         const { secret, expiresIn } = authConfig.jwt;
